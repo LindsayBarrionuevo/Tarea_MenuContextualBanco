@@ -1,0 +1,18 @@
+2025/01/16-20:50:38.767 49ec Reusing MANIFEST C:\Users\Dome\AppData\Local\Temp\flutter_tools.6eefb7ca\flutter_tools_chrome_device.3bbf9cad\Default\Session Storage/MANIFEST-000001
+2025/01/16-20:50:38.777 49ec Recovering log #3
+2025/01/16-20:50:38.784 49ec Reusing old log C:\Users\Dome\AppData\Local\Temp\flutter_tools.6eefb7ca\flutter_tools_chrome_device.3bbf9cad\Default\Session Storage/000003.log 
+2025/01/16-20:59:39.391 49ec Level-0 table #5: started
+2025/01/16-20:59:39.400 49ec Level-0 table #5: 78182 bytes OK
+2025/01/16-20:59:39.406 49ec Delete type=0 #3
+2025/01/16-21:00:24.260 49ec Level-0 table #7: started
+2025/01/16-21:00:24.269 49ec Level-0 table #7: 137893 bytes OK
+2025/01/16-21:00:24.274 49ec Delete type=0 #4
+2025/01/16-21:03:00.938 1da0 Level-0 table #9: started
+2025/01/16-21:03:00.957 1da0 Level-0 table #9: 322743 bytes OK
+2025/01/16-21:03:00.963 1da0 Delete type=0 #6
+2025/01/16-21:04:00.938 1da0 Level-0 table #11: started
+2025/01/16-21:04:00.951 1da0 Level-0 table #11: 65431 bytes OK
+2025/01/16-21:04:00.957 1da0 Delete type=0 #8
+2025/01/16-21:08:14.152 49ec Level-0 table #13: started
+2025/01/16-21:08:14.170 49ec Level-0 table #13: 133196 bytes OK
+2025/01/16-21:08:14.175 49ec Delete type=0 #10
