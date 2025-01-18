@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:menulateral/vista/pago_servicios_vista.dart';
+import 'package:menulateral/vista/tarjetas_credito_vista.dart';
 import '../controlador/transferencia_controlador.dart';
+import 'flexiahorro_vista.dart';
+import 'inversiondigital_vista.dart';
 import 'transferencia_vista.dart';
 
 class InicioVista extends StatefulWidget {
+
+  final TransferenciaControlador? controlador;
+
+  InicioVista({this.controlador});
+
+
   @override
   _InicioVistaState createState() => _InicioVistaState();
 }
 
 class _InicioVistaState extends State<InicioVista> {
-  final TransferenciaControlador _controlador = TransferenciaControlador();
+  late TransferenciaControlador _controlador;
   final String _numeroCuenta = '1234567890'; // Número de cuenta
   late double _saldoDisponible; // Saldo disponible
   bool _verSaldo = true; // Controla la visibilidad del saldo
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controlador = widget.controlador ?? TransferenciaControlador();
+    _saldoDisponible = _controlador.saldo;
+  }
 
   void toggleSaldo() {
     setState(() {
@@ -19,27 +37,98 @@ class _InicioVistaState extends State<InicioVista> {
     });
   }
 
-  void initState() {
-    super.initState();
-    _saldoDisponible = _controlador.saldo;
+  void actualizarSaldo() {
+    setState(() {
+      _saldoDisponible = _controlador.saldo;
+    });
   }
 
-  void actualizarSaldo() {
-    setState(() {});
-    _saldoDisponible = _controlador.saldo;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Lógica para la página de inicio
+        break;
+      case 1:
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Ubícanos'),
+              content: Text('Muy pronto estaremos en todas las provincias del Ecuador, ¡Mantente atento a lo que está por venir!.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cerrar'),
+                ),
+              ],
+            );
+          },
+        );
+        break;
+      case 2:
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Estela'),
+              content: Text('Nuestra asistente virtual está por llegar, ¡Mantente atento a lo que está por venir!.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cerrar'),
+                ),
+              ],
+            );
+          },
+        );
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.yellow[700],
-        title: Text(
-          'Banco BaPiRiYa',
-          style: TextStyle(color: Colors.black),
-        ),
-        elevation: 0,
+        title: Text('Banco BaPiRiYa', style: TextStyle(color: Colors.white, fontSize: 28, )),
+        backgroundColor: const Color.fromARGB(255, 0, 77, 21),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications, color: Colors.white,),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text('Notificaciones'),
+                    content: Text('No hay notificaciones por el momento'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Cerrar'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.person_rounded, color: Colors.white,),
+            onPressed: () {
+              // Acción para el icono de usuario
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -47,21 +136,49 @@ class _InicioVistaState extends State<InicioVista> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.yellow[700],
+                color: const Color.fromARGB(255, 0, 77, 21),
               ),
-              child: Text(
-                'Menú Principal',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Logo o icono del banco
+                  
+                  Text(
+                    'Banca Digital \nBaPiRiYa',
+                    style: TextStyle(
+                      fontSize: 28,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.send, color: Colors.green[800]),
-              title: Text('Transferir Dinero'),
-              onTap: () async {
+            // Ítems del menú
+            _buildMenuItem(Icons.grid_view, 'Resumen', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InicioVista(),
+                  ),
+                );
+            }),
+            _buildMenuItem(Icons.payment, 'Tarjetas de crédito', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TarjetasCreditoVista(),
+                  ),
+                );
+            }),
+            _buildMenuItem(Icons.receipt, 'Pago de servicios', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PagosServiciosVista(),
+                  ),
+                );
+            }),
+            _buildMenuItem(Icons.send, 'Transferencias', () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -69,29 +186,7 @@ class _InicioVistaState extends State<InicioVista> {
                   ),
                 );
                 actualizarSaldo();
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.payment, color: Colors.green[800]),
-              title: Text('Pagar Servicios'),
-              onTap: () {
-                // Acción al presionar "Pagar Servicios"
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card, color: Colors.green[800]),
-              title: Text('Pagar Tarjetas'),
-              onTap: () {
-                // Acción al presionar "Pagar Tarjetas"
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.more_horiz, color: Colors.green[800]),
-              title: Text('Todas las Operaciones'),
-              onTap: () {
-                // Acción al presionar "Todas las Operaciones"
-              },
-            ),
+              },),
           ],
         ),
       ),
@@ -104,58 +199,109 @@ class _InicioVistaState extends State<InicioVista> {
               // Saludo al usuario
               Text(
                 'Hola, Usuario',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 38,
+                ),
               ),
-              SizedBox(height: 20),
-
-              // Sección "Mis productos"
+              SizedBox(height: 5),
               Text(
-                'Mis productos',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                'Último ingreso 18 Jan, 2025/9:01pm',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 15),
+
               Card(
-                elevation: 4.0,
+                elevation: 5.0,
+                margin: EdgeInsets.only(bottom: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Cuenta Digital',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'N.° $_numeroCuenta',
-                        style: TextStyle(fontSize: 16, color: Colors.black),
-                      ),
-                      SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            _verSaldo
-                                ? 'Saldo Disponible: \$${_saldoDisponible.toStringAsFixed(2)}'
-                                : 'Saldo Disponible: *****',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[800]),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                textAlign: TextAlign.left,
+                                'Cuenta Digital',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
                           IconButton(
                             icon: Icon(
                               _verSaldo ? Icons.visibility : Icons.visibility_off,
-                              color: Colors.grey[700],
+                              color: Colors.black,
                             ),
                             onPressed: toggleSaldo,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 5),
+                              Text(
+                                'Disponible',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: const Color.fromARGB(255, 26, 25, 25),
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                _verSaldo
+                                    ? '€${_saldoDisponible.toStringAsFixed(2)}'
+                                    : '€***.**',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              Text(
+                                'Saldo por efectivizar: €0.00',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: const Color.fromARGB(255, 26, 25, 25),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Divider(height: 30, thickness: 1, color: Colors.grey[300]),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'N.º $_numeroCuenta',
+                            style: TextStyle(fontSize: 20, color: Colors.green[800]),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.share,
+                              color: Colors.green[800],
+                            ),
+                            onPressed: () {
+                              // Acción al presionar el ícono de compartir
+                            },
                           ),
                         ],
                       ),
@@ -163,10 +309,152 @@ class _InicioVistaState extends State<InicioVista> {
                   ),
                 ),
               ),
+
+              SizedBox(height: 20),
+              Text(
+                'Productos para ti',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 10),
+              Column(
+                children: [
+                  _buildProductCard(
+                    'FlexiAhorro',
+                    'Comienza a ganar el 5% con tus ahorros desde el día 1',
+                    Icons.savings,
+                    const Color.fromARGB(255, 46, 125, 50),
+                    () {
+                      // Navegar a la página de FlexiAhorro
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FlexiAhorroVista()),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 8), // Espacio entre tarjetas
+                  _buildProductCard(
+                    'Inversión Digital',
+                    'Haz crecer tu dinero con una tasa preferencial',
+                    Icons.trending_up,
+                    const Color.fromARGB(255, 46, 125, 50),
+                    () {
+                      // Navegar a la página de Inversión Digital
+                      
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => InversionDigitalVista()),
+                      ); 
+                    },
+                  ),
+                ],
+              ),
+
             ],
           ),
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed, 
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Inicio',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.location_on),
+            label: 'Ubícanos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assistant),
+            label: 'Estela',
+          ),
+        ],
+        currentIndex: _selectedIndex, // Índice seleccionado
+        selectedItemColor: Colors.green[800], 
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped, // Método para manejar el cambio de índice
+      ),
+
     );
   }
+
+  Widget _buildProductCard(
+    String title, 
+    String description, 
+    IconData icon, 
+    Color color, 
+    VoidCallback onTap // Aquí pasamos la función onTap como parámetro
+  ) {
+    return GestureDetector(
+      onTap: onTap, // Usamos el onTap pasado como parámetro
+      child: Container(
+        height: 100, // Altura fija compacta
+        margin: EdgeInsets.symmetric(horizontal: 2.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: Offset(0, 2), // Sombra ligera debajo
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Icon(icon, size: 30, color: color),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: Icon(Icons.arrow_forward_ios, size: 16, color: const Color.fromARGB(255, 46, 125, 50)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
+
+  Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.green[800]), // Color de los íconos
+      title: Text(
+        title,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+      ),
+      onTap: onTap, // Acción al tocar
+    );
+  }
+
 }
