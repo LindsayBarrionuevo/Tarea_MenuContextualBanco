@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
-import 'vista/inicio_vista.dart';
+import 'package:menulateral/vista/login.dart';
+import 'package:provider/provider.dart';
+import 'package:menulateral/vista/inicio_vista.dart';
+import './providers/UserProvider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,8 +25,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: InicioVista(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Login(),
+        '/home': (context) => InicioVista(),
+      },
     );
   }
 }
-

@@ -1,17 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:menulateral/providers/UserProvider.dart';
 import 'package:menulateral/vista/pago_servicios_vista.dart';
 import 'package:menulateral/vista/tarjetas_credito_vista.dart';
+import 'package:provider/provider.dart';
 import '../controlador/transferencia_controlador.dart';
 import 'flexiahorro_vista.dart';
 import 'inversiondigital_vista.dart';
 import 'transferencia_vista.dart';
 
 class InicioVista extends StatefulWidget {
-
   final TransferenciaControlador? controlador;
 
   InicioVista({this.controlador});
-
 
   @override
   _InicioVistaState createState() => _InicioVistaState();
@@ -19,16 +22,21 @@ class InicioVista extends StatefulWidget {
 
 class _InicioVistaState extends State<InicioVista> {
   late TransferenciaControlador _controlador;
-  final String _numeroCuenta = '1234567890'; // Número de cuenta
+  String _numeroCuenta = '0';
   late double _saldoDisponible; // Saldo disponible
   bool _verSaldo = true; // Controla la visibilidad del saldo
   int _selectedIndex = 0;
+  late UserProvider userProvider;
+  List<Map<String, dynamic>> _notificaciones = [];
 
   @override
   void initState() {
     super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     _controlador = widget.controlador ?? TransferenciaControlador();
-    _saldoDisponible = _controlador.saldo;
+    _saldoDisponible = userProvider.user?.balance ?? 0.0;
+    _numeroCuenta = userProvider.user?.accountNumber ?? '0';
+    _fetchPaymentHistory();
   }
 
   void toggleSaldo() {
@@ -39,7 +47,7 @@ class _InicioVistaState extends State<InicioVista> {
 
   void actualizarSaldo() {
     setState(() {
-      _saldoDisponible = _controlador.saldo;
+      _saldoDisponible = userProvider.user?.balance ?? 0.0;
     });
   }
 
@@ -58,7 +66,8 @@ class _InicioVistaState extends State<InicioVista> {
           builder: (context) {
             return AlertDialog(
               title: Text('Ubícanos'),
-              content: Text('Muy pronto estaremos en todas las provincias del Ecuador, ¡Mantente atento a lo que está por venir!.'),
+              content: Text(
+                  'Muy pronto estaremos en todas las provincias del Ecuador, ¡Mantente atento a lo que está por venir!.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -77,7 +86,8 @@ class _InicioVistaState extends State<InicioVista> {
           builder: (context) {
             return AlertDialog(
               title: Text('Estela'),
-              content: Text('Nuestra asistente virtual está por llegar, ¡Mantente atento a lo que está por venir!.'),
+              content: Text(
+                  'Nuestra asistente virtual está por llegar, ¡Mantente atento a lo que está por venir!.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -93,22 +103,70 @@ class _InicioVistaState extends State<InicioVista> {
     }
   }
 
+  Future<void> _fetchPaymentHistory() async {
+    final userId = userProvider.user?.id;
+    if (userId != null) {
+      final response = await http.get(
+        Uri.parse('http://localhost:5000/api/transactions?user_id=$userId'),
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonList = jsonDecode(response.body);
+        setState(() {
+          // Limitar a los 3 últimos movimientos
+          _notificaciones = jsonList
+              .take(3)
+              .map((item) => item as Map<String, dynamic>)
+              .toList();
+        });
+      } else {
+        setState(() {
+          _notificaciones = [];
+        });
+      }
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Banco BaPiRiYa', style: TextStyle(color: Colors.white, fontSize: 28, )),
+        title: Text('Banco BaPiRiYa',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+            )),
         backgroundColor: const Color.fromARGB(255, 0, 77, 21),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications, color: Colors.white,),
+            icon: Icon(
+              Icons.notifications,
+              color: Colors.white,
+            ),
             onPressed: () {
               showDialog(
+                //Mostrar las notificaciones
                 context: context,
                 builder: (context) {
                   return AlertDialog(
                     title: Text('Notificaciones'),
-                    content: Text('No hay notificaciones por el momento'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _notificaciones
+                          .map(
+                            (notificacion) => ListTile(
+                              title: Text("Movimiento desde: " + notificacion['card_number']),
+                              subtitle: Text(
+                                notificacion['created_at'] + ". Con el monto de: " + notificacion['amount'].toString(),
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -123,9 +181,21 @@ class _InicioVistaState extends State<InicioVista> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.person_rounded, color: Colors.white,),
+            icon: Icon(
+              Icons.person_rounded,
+              color: Colors.white,
+            ),
             onPressed: () {
               // Acción para el icono de usuario
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.exit_to_app,
+              color: const Color.fromARGB(255, 211, 0, 0),
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, '/');
             },
           ),
         ],
@@ -142,7 +212,7 @@ class _InicioVistaState extends State<InicioVista> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Logo o icono del banco
-                  
+
                   Text(
                     'Banca Digital \nBaPiRiYa',
                     style: TextStyle(
@@ -156,37 +226,42 @@ class _InicioVistaState extends State<InicioVista> {
             // Ítems del menú
             _buildMenuItem(Icons.grid_view, 'Resumen', () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InicioVista(),
-                  ),
-                );
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InicioVista(),
+                ),
+              );
             }),
             _buildMenuItem(Icons.payment, 'Tarjetas de crédito', () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TarjetasCreditoVista(),
-                  ),
-                );
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TarjetasCreditoVista(),
+                ),
+              );
             }),
             _buildMenuItem(Icons.receipt, 'Pago de servicios', () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PagosServiciosVista(),
-                  ),
-                );
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PagosServiciosVista(),
+                ),
+              );
             }),
-            _buildMenuItem(Icons.send, 'Transferencias', () async {
+            _buildMenuItem(
+              Icons.send,
+              'Transferencias',
+              () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TransferenciaVista(controlador: _controlador),
+                    builder: (context) =>
+                        TransferenciaVista(controlador: _controlador),
                   ),
                 );
                 actualizarSaldo();
-              },),
+              },
+            ),
           ],
         ),
       ),
@@ -198,14 +273,15 @@ class _InicioVistaState extends State<InicioVista> {
             children: [
               // Saludo al usuario
               Text(
-                'Hola, Usuario',
+                'Hola, ${userProvider.user?.email.split('@').first ?? 'Usuario'}',
                 style: TextStyle(
                   fontSize: 38,
                 ),
               ),
               SizedBox(height: 5),
               Text(
-                'Último ingreso 18 Jan, 2025/9:01pm',
+                'Último ingreso' +
+                    ' ${userProvider.user?.createdAt.day}/${userProvider.user?.createdAt.month}/${userProvider.user?.createdAt.year}',
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -242,7 +318,9 @@ class _InicioVistaState extends State<InicioVista> {
                           ),
                           IconButton(
                             icon: Icon(
-                              _verSaldo ? Icons.visibility : Icons.visibility_off,
+                              _verSaldo
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                               color: Colors.black,
                             ),
                             onPressed: toggleSaldo,
@@ -266,7 +344,7 @@ class _InicioVistaState extends State<InicioVista> {
                               SizedBox(height: 5),
                               Text(
                                 _verSaldo
-                                    ? '€${_saldoDisponible.toStringAsFixed(2)}'
+                                    ? '€${userProvider.user?.balance.toStringAsFixed(2) ?? '0.00'}'
                                     : '€***.**',
                                 style: TextStyle(
                                   fontSize: 24,
@@ -286,13 +364,15 @@ class _InicioVistaState extends State<InicioVista> {
                           ),
                         ],
                       ),
-                      Divider(height: 30, thickness: 1, color: Colors.grey[300]),
+                      Divider(
+                          height: 30, thickness: 1, color: Colors.grey[300]),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             'N.º $_numeroCuenta',
-                            style: TextStyle(fontSize: 20, color: Colors.green[800]),
+                            style: TextStyle(
+                                fontSize: 20, color: Colors.green[800]),
                           ),
                           IconButton(
                             icon: Icon(
@@ -327,7 +407,8 @@ class _InicioVistaState extends State<InicioVista> {
                       // Navegar a la página de FlexiAhorro
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => FlexiAhorroVista()),
+                        MaterialPageRoute(
+                            builder: (context) => FlexiAhorroVista()),
                       );
                     },
                   ),
@@ -339,22 +420,22 @@ class _InicioVistaState extends State<InicioVista> {
                     const Color.fromARGB(255, 46, 125, 50),
                     () {
                       // Navegar a la página de Inversión Digital
-                      
+
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => InversionDigitalVista()),
-                      ); 
+                        MaterialPageRoute(
+                            builder: (context) => InversionDigitalVista()),
+                      );
                     },
                   ),
                 ],
               ),
-
             ],
           ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, 
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -370,21 +451,20 @@ class _InicioVistaState extends State<InicioVista> {
           ),
         ],
         currentIndex: _selectedIndex, // Índice seleccionado
-        selectedItemColor: Colors.green[800], 
+        selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped, // Método para manejar el cambio de índice
       ),
-
     );
   }
 
   Widget _buildProductCard(
-    String title, 
-    String description, 
-    IconData icon, 
-    Color color, 
-    VoidCallback onTap // Aquí pasamos la función onTap como parámetro
-  ) {
+      String title,
+      String description,
+      IconData icon,
+      Color color,
+      VoidCallback onTap // Aquí pasamos la función onTap como parámetro
+      ) {
     return GestureDetector(
       onTap: onTap, // Usamos el onTap pasado como parámetro
       child: Container(
@@ -435,16 +515,14 @@ class _InicioVistaState extends State<InicioVista> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 15.0),
-              child: Icon(Icons.arrow_forward_ios, size: 16, color: const Color.fromARGB(255, 46, 125, 50)),
+              child: Icon(Icons.arrow_forward_ios,
+                  size: 16, color: const Color.fromARGB(255, 46, 125, 50)),
             ),
           ],
         ),
       ),
     );
   }
-
-
-
 
   Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
@@ -456,5 +534,4 @@ class _InicioVistaState extends State<InicioVista> {
       onTap: onTap, // Acción al tocar
     );
   }
-
 }
