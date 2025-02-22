@@ -22,166 +22,6 @@ class _LoginState extends State<Login> {
   final TextEditingController _passwordController = TextEditingController();
   String _errorMessage = '';
 
-  // Future<void> _login() async {
-  //   final String email = _emailController.text.trim();
-  //   final String password = _passwordController.text;
-
-  //   if (email.isEmpty || password.isEmpty) {
-  //     setState(() {
-  //       _errorMessage = 'Por favor, ingresa ambos campos';
-  //     });
-  //     return;
-  //   }
-
-  //   final response =
-  //       await http.get(Uri.parse('http://192.168.137.1:9090/api/users'));
-
-  //   if (response.statusCode == 200) {
-  //     List<dynamic> users = json.decode(response.body);
-
-  //     var user = users.firstWhere(
-  //       (u) => u['email'] == email && u['password_hash'] == password,
-  //       orElse: () => null,
-  //     );
-
-  //     if (user != null) {
-  //       UserModel loggedInUser = UserModel.fromJson(user);
-
-  //       // Guardar en el Provider
-  //       Provider.of<UserProvider>(context, listen: false).setUser(loggedInUser);
-
-  //       // Obtener usuario autenticado con Google
-  //       User? googleUser = FirebaseAuth.instance.currentUser;
-
-  //       if (googleUser != null) {
-  //         // Relacionar en Firestore
-  //         await FirebaseFirestore.instance
-  //             .collection('user_links')
-  //             .doc(email)
-  //             .set({
-  //           'bank_email': email,
-  //           'google_email': googleUser.email,
-  //           'fcmToken': await FirebaseMessaging.instance.getToken(),
-  //         });
-  //       }
-
-  //       // Redirigir al login del banco
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => InicioVista()),
-  //       );
-  //     } else {
-  //       setState(() {
-  //         _errorMessage = 'Email o contraseña incorrectos';
-  //       });
-  //     }
-  //   } else {
-  //     setState(() {
-  //       _errorMessage = 'Error en la conexión con el servidor';
-  //     });
-  //   }
-  // }
-
-  // Future<void> _login() async {
-  //   final String email = _emailController.text.trim();
-  //   final String password = _passwordController.text;
-
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(content: Text("Intentando iniciar sesión...")),
-  //   );
-
-  //   if (email.isEmpty || password.isEmpty) {
-  //     setState(() {
-  //       _errorMessage = 'Por favor, ingresa ambos campos';
-  //     });
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Campos vacíos")),
-  //     );
-  //     return;
-  //   }
-
-  //   try {
-  //     final response =
-  //         await http.get(Uri.parse('http://192.168.137.1:9090/api/users'));
-
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Código de respuesta: ${response.statusCode}")),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       List<dynamic> users = json.decode(response.body);
-
-  //       var user = users.firstWhere(
-  //         (u) => u['email'] == email && u['password_hash'] == password,
-  //         orElse: () => null,
-  //       );
-
-  //       if (user != null) {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(content: Text("Usuario encontrado, iniciando sesión...")),
-  //         );
-
-  //         UserModel loggedInUser = UserModel.fromJson(user);
-  //         Provider.of<UserProvider>(context, listen: false)
-  //             .setUser(loggedInUser);
-
-  //         // Verificar autenticación con Firebase
-  //         User? googleUser = FirebaseAuth.instance.currentUser;
-
-  //         if (googleUser != null) {
-  //           await FirebaseFirestore.instance
-  //               .collection('user_links')
-  //               .doc(email)
-  //               .set({
-  //             'bank_email': email,
-  //             'google_email': googleUser.email,
-  //             'account_number': loggedInUser.accountNumber,
-  //             'fcmToken': await FirebaseMessaging.instance.getToken(),
-  //           },SetOptions(merge: true));
-
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text("Datos guardados en Firestore")),
-  //           );
-  //         } else {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text("No se encontró usuario de Google")),
-  //           );
-  //         }
-  //         try {
-  //           if (!mounted) return;
-  //           Navigator.pushReplacement(
-  //         context, MaterialPageRoute(builder: (context) => InicioVista()));
-  //         } catch (e) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text("Error al cambiar de pantalla: $e")),
-  //           );
-  //         }
-  //       } else {
-  //         setState(() {
-  //           _errorMessage = 'Email o contraseña incorrectos';
-  //         });
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(content: Text("Credenciales incorrectas")),
-  //         );
-  //       }
-  //     } else {
-  //       setState(() {
-  //         _errorMessage = 'Error en la conexión con el servidor';
-  //       });
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text("Error en la conexión con el servidor")),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       _errorMessage = 'Ocurrió un error, intenta de nuevo';
-  //     });
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Error: $e")),
-  //     );
-  //   }
-  // }
-
   Future<void> _login() async {
     final String email = _emailController.text.trim();
     final String password = _passwordController.text;
@@ -204,9 +44,9 @@ class _LoginState extends State<Login> {
       final response =
           await http.get(Uri.parse('http://192.168.137.1:9090/api/users'));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Código de respuesta: ${response.statusCode}")),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text("Código de respuesta: ${response.statusCode}")),
+      // );
 
       if (response.statusCode == 200) {
         List<dynamic> users = json.decode(response.body);
@@ -217,9 +57,9 @@ class _LoginState extends State<Login> {
         );
 
         if (user != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Usuario encontrado, iniciando sesión...")),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text("Usuario encontrado, iniciando sesión...")),
+          // );
 
           UserModel loggedInUser = UserModel.fromJson(user);
           Provider.of<UserProvider>(context, listen: false)
@@ -246,9 +86,9 @@ class _LoginState extends State<Login> {
                         merge:
                             true)); // Usa merge para no sobrescribir datos previos
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Datos guardados en Firestore")),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text("Datos guardados en Firestore")),
+            // );
 
             //  Redirigir a la pantalla principal
             if (!mounted) return;

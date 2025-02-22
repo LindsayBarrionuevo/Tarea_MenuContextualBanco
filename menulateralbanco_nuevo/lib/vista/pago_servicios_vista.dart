@@ -57,40 +57,6 @@ class _PagosServiciosVistaState extends State<PagosServiciosVista> {
     }
   }
 
-  // Future<void> _descargarHistorialPdf() async {
-  //   try {
-  //     // Realizamos la solicitud al backend para obtener el PDF
-  //     final response = await http
-  //         .get(Uri.parse('http://192.168.137.1:5000/api/transactions/pdf'));
-
-  //     if (response.statusCode == 200) {
-  //       // Obtenemos los bytes del archivo PDF
-  //       final bytes = response.bodyBytes;
-
-  //       // Creamos un objeto Blob a partir de los bytes del archivo
-  //       final blob = html.Blob([Uint8List.fromList(bytes)]);
-
-  //       // Generamos una URL para el Blob
-  //       final url = html.Url.createObjectUrlFromBlob(blob);
-
-  //       // Creamos un enlace de descarga
-  //       final anchor = html.AnchorElement(href: url)
-  //         ..target = 'blank'
-  //         ..download = 'transactions.pdf'
-  //         ..click();
-
-  //       // Limpiamos la URL después de la descarga
-  //       html.Url.revokeObjectUrl(url);
-  //     } else {
-  //       // Si la solicitud falla, mostramos un mensaje
-  //       _mostrarMensaje('Error al descargar el PDF');
-  //     }
-  //   } catch (e) {
-  //     // Capturamos errores en la solicitud HTTP
-  //     _mostrarMensaje('Error en la solicitud: $e');
-  //   }
-  // }
-
   Future<void> _descargarHistorialPdf() async {
   try {
     final response = await http.get(Uri.parse('http://192.168.137.1:5000/api/transactions/pdf'));

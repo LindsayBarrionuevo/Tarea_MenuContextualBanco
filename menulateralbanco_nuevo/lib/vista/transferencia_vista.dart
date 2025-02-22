@@ -90,7 +90,7 @@ class _TransferenciaVistaState extends State<TransferenciaVista> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('✅ Transferencia realizada con éxito')),
+          SnackBar(content: Text(' Transferencia realizada con éxito')),
         );
 
         // Buscar el token FCM del destinatario
@@ -114,24 +114,24 @@ class _TransferenciaVistaState extends State<TransferenciaVista> {
           print(" No se encontró el destinatario con esa cuenta.");
         }
       } else {
-        print('❌ Error en la transferencia: ${response.body}');
+        print(' Error en la transferencia: ${response.body}');
         setState(() {
           _resultado = 'Error en la transferencia: ${response.body}';
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('❌ Error en la transferencia: ${response.body}')),
+              content: Text(' Error en la transferencia: ${response.body}')),
         );
       }
     } catch (e) {
-      print('❌ Error de conexión: $e');
+      print(' Error de conexión: $e');
       setState(() {
         _resultado = 'Error de conexión';
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('❌ Error de conexión')),
+        SnackBar(content: Text(' Error de conexión')),
       );
     }
   }

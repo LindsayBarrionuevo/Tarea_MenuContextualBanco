@@ -8,7 +8,7 @@ void setupFirebaseMessaging() {
       print('Notificación recibida: ${message.notification!.title}');
       print(' Cuerpo: ${message.notification!.body}');
 
-      // 📢 Mostrar un Toast con la notificación
+      //  Mostrar un Toast con la notificación
       Fluttertoast.showToast(
         msg: "${message.notification!.title}: ${message.notification!.body}",
         toastLength: Toast.LENGTH_LONG,
