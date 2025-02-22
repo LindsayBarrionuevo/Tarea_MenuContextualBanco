@@ -306,8 +306,11 @@ def transfer():
     if not receiver:
         return jsonify({'error': 'Usuario receptor no encontrado'}), 404
 
-    # Convertir amount a Decimal
-    amount = Decimal(str(amount))
+    # Detectar tipo de datos y hacer conversión
+    if isinstance(sender.balance, Decimal):
+        amount = Decimal(str(amount))
+    else:
+        amount = float(amount)
 
     if sender.balance < amount:
         return jsonify({'error': 'Fondos insuficientes'}), 400

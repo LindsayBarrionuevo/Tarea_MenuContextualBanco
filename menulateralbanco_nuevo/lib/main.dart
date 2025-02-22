@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:menulateralbanco_nuevo/vista/login.dart';
 import 'package:provider/provider.dart';
-import 'package:menulateralbanco_nuevo/vista/inicio_vista.dart';
 import './providers/UserProvider.dart';
 import './services/auth_checker.dart';
-
+import './services/firebase_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; // Asegúrate de tener este archivo generado correctamente
 
@@ -15,6 +13,7 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform, // Asegúrate de tenerlo bien configurado
     );
+    setupFirebaseMessaging(); // Configurar Firebase Messaging
   } catch (e) {
     print("Error al inicializar Firebase: $e");
   }
