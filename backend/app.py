@@ -6,6 +6,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import io
 from flask_migrate import Migrate
+from decimal import Decimal
 
 import firebase_manage 
 
@@ -206,56 +207,125 @@ def download_pdf():
     return send_file(buffer, as_attachment=True, download_name="transactions.pdf", mimetype="application/pdf")
 
 # Funcion para las transferencias entre un usuario a otro usuario...
-@app.route('/api/transfer', methods=['POST'])
+# @app.route('/api/transfer', methods=['POST'])
+# def transfer():
+#     data = request.get_json()
+#     noCuentaOrigen = data.get('sender')
+#     noCuentaDestino = data.get('receiver')
+#     amount = data.get('amount')
+    
+#     if not noCuentaOrigen or not noCuentaDestino or not amount:
+#         return jsonify({'error': 'El id del emisor, el id del receptor y el monto son necesarios'}), 400
+
+#     if amount <= 0:
+#         return jsonify({'error': 'Monto inválido'}), 400
+
+#     # Verificar si el usuario emisor existe y obtener su balance
+#     sender = User.query.filter_by(account_number=noCuentaOrigen).first()
+#     if not sender:
+#         return jsonify({'error': 'Usuario emisor no encontrado'}), 404
+
+#     # Verificar si el usuario receptor existe y obtener su balance
+#     receiver = User.query.filter_by(account_number=noCuentaDestino).first()
+#     if not receiver:
+#         return jsonify({'error': 'Usuario receptor no encontrado'}), 404
+
+#     # Verificar si el usuario emisor tiene saldo suficiente
+#     if sender.balance < amount:
+#         return jsonify({'error': 'Fondos insuficientes'}), 400
+
+#     try:
+#         # Restar el monto del balance del usuario emisor
+#         sender.balance -= amount
+#         db.session.commit()
+
+#         # Sumar el monto al balance del usuario receptor
+#         receiver.balance += amount
+#         db.session.commit()
+        
+#         # Guardar la transferencia en la base de datos
+#         trans = Transfer(noCuentaOrigen=noCuentaOrigen, noCuentaDestino=noCuentaDestino, amount=amount)
+#         db.session.add(trans)
+#         db.session.commit()
+        
+#         # obtener el user_id del emisor
+#         user_id = User.query.filter_by(account_number=noCuentaOrigen).first().id
+        
+#         # Guardar el pago en la base de datos
+#         payment = Payment(user_id=user_id, amount=amount, status='completed')
+#         db.session.add(payment)
+#         db.session.commit()
+        
+#         # Crear la transacción relacionada
+#         transaction = Transaction(
+#             payment_id=payment.id,
+#             card_number=noCuentaOrigen,
+#             amount=amount,
+#             status='completed',
+#             description='transferencia'
+#         )
+#         db.session.add(transaction)
+#         db.session.commit()
+
+#         return jsonify({
+#             'message': 'Transferencia realizada correctamente',
+#             'sender': {
+#                 'id': sender.id,
+#                 'balance': sender.balance
+#             },
+#             'receiver': {
+#                 'id': receiver.id,
+#                 'balance': receiver.balance
+#             },
+#             'amount': amount,
+#             'created_at': datetime.datetime.now()
+#         }), 200
+    
+#     except Exception as e:
+#         db.session.rollback()
+#         return jsonify({'error': f'Error en la transferencia: {str(e)}'}), 500
+
+@app.route('/api/transfer', methods=['POST']) 
 def transfer():
     data = request.get_json()
     noCuentaOrigen = data.get('sender')
     noCuentaDestino = data.get('receiver')
     amount = data.get('amount')
-    
+
     if not noCuentaOrigen or not noCuentaDestino or not amount:
         return jsonify({'error': 'El id del emisor, el id del receptor y el monto son necesarios'}), 400
 
     if amount <= 0:
         return jsonify({'error': 'Monto inválido'}), 400
 
-    # Verificar si el usuario emisor existe y obtener su balance
     sender = User.query.filter_by(account_number=noCuentaOrigen).first()
     if not sender:
         return jsonify({'error': 'Usuario emisor no encontrado'}), 404
 
-    # Verificar si el usuario receptor existe y obtener su balance
     receiver = User.query.filter_by(account_number=noCuentaDestino).first()
     if not receiver:
         return jsonify({'error': 'Usuario receptor no encontrado'}), 404
 
-    # Verificar si el usuario emisor tiene saldo suficiente
+    # Convertir amount a Decimal
+    amount = Decimal(str(amount))
+
     if sender.balance < amount:
         return jsonify({'error': 'Fondos insuficientes'}), 400
 
     try:
-        # Restar el monto del balance del usuario emisor
         sender.balance -= amount
-        db.session.commit()
-
-        # Sumar el monto al balance del usuario receptor
         receiver.balance += amount
         db.session.commit()
-        
-        # Guardar la transferencia en la base de datos
+
         trans = Transfer(noCuentaOrigen=noCuentaOrigen, noCuentaDestino=noCuentaDestino, amount=amount)
         db.session.add(trans)
         db.session.commit()
-        
-        # obtener el user_id del emisor
-        user_id = User.query.filter_by(account_number=noCuentaOrigen).first().id
-        
-        # Guardar el pago en la base de datos
+
+        user_id = sender.id
         payment = Payment(user_id=user_id, amount=amount, status='completed')
         db.session.add(payment)
         db.session.commit()
-        
-        # Crear la transacción relacionada
+
         transaction = Transaction(
             payment_id=payment.id,
             card_number=noCuentaOrigen,
@@ -279,11 +349,10 @@ def transfer():
             'amount': amount,
             'created_at': datetime.datetime.now()
         }), 200
-    
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f'Error en la transferencia: {str(e)}'}), 500
-
 
 @app.route('/send-notification', methods=['POST'])
 def send_notification():
