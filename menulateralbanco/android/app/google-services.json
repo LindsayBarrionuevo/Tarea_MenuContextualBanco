@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "713659843769",
+    "project_id": "banco-bapiriya",
+    "storage_bucket": "banco-bapiriya.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713659843769:android:81a4882c2ee084411f8768",
+        "android_client_info": {
+          "package_name": "com.example.menulateral"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUVuZx6qdcT-V8z4_CSLfv9_OPJQkvjkc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

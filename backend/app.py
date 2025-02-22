@@ -5,17 +5,21 @@ from flask_sqlalchemy import SQLAlchemy
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import io
+from flask_migrate import Migrate
+
+import firebase_manage 
 
 app = Flask(__name__)
 
 # Configuración de CORS (permitir desde cualquier origen, puedes restringirlo a tu frontend específico)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:43293"}})
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Configuración de la base de datos
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:1234@localhost/banco_DB'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/crud_mysql_service'   #Puse root: en blanco porque no tengo contraseña antes estaba root:1234
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
+# Configurar Flask-Migrate
+migrate = Migrate(app, db)
 # Modelo de la tabla de pagos
 class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,17 +47,30 @@ class Transaction(db.Model):
     def __repr__(self):
         return f'<Transaction {self.id}>'
     
+# class User(db.Model):
+#     __tablename__ = 'user'
+    
+#     id = db.Column(db.Integer, primary_key=True)
+#     email = db.Column(db.String(255), unique=True, nullable=False)
+#     password_hash = db.Column(db.String(255), nullable=False)
+#     created_at = db.Column(db.TIMESTAMP, default=datetime.UTC)
+#     account_number = db.Column(db.String(20), unique=True, nullable=False)
+#     balance = db.Column(db.Numeric(10, 2), default=0.00, nullable=False)
+    
+#     cards = db.relationship('Card', backref='user', lazy=True)
+
 class User(db.Model):
     __tablename__ = 'user'
     
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)  # Match con Spring Boot
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.TIMESTAMP, default=datetime.UTC)
-    account_number = db.Column(db.String(20), unique=True, nullable=False)
+    account_number = db.Column(db.String(255), unique=True, nullable=False)
     balance = db.Column(db.Numeric(10, 2), default=0.00, nullable=False)
+    created_at = db.Column(db.TIMESTAMP, default=lambda: datetime.now(timezone.utc), nullable=False)
     
     cards = db.relationship('Card', backref='user', lazy=True)
+
 
 class Card(db.Model):
     __tablename__ = 'card'
@@ -267,5 +284,27 @@ def transfer():
         db.session.rollback()
         return jsonify({'error': f'Error en la transferencia: {str(e)}'}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+@app.route('/send-notification', methods=['POST'])
+def send_notification():
+    data = request.get_json()
+    print(data)
+    token = data.get("token")
+    sender = data.get("sender")
+    amount = data.get("amount")
+
+    if not token or not sender or not amount:
+        return jsonify({"error": "Faltan parámetros"}), 400
+
+    try:
+        firebase_manage.send_push_notification(token, sender, amount)
+        return jsonify({"message": "Notificación enviada correctamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

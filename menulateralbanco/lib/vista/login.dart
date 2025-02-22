@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../providers/UserProvider.dart';
 import '../modelo/user_model.dart';
 import 'register.dart'; // Importamos la vista de registro
@@ -41,10 +44,25 @@ class _LoginState extends State<Login> {
       if (user != null) {
         UserModel loggedInUser = UserModel.fromJson(user);
 
-        // Guardar el usuario en el Provider
+        // Guardar en el Provider
         Provider.of<UserProvider>(context, listen: false).setUser(loggedInUser);
 
-        Navigator.pushNamed(context, '/home'); // Redirigir a la vista principal
+        // Obtener usuario autenticado con Google
+        User? googleUser = FirebaseAuth.instance.currentUser;
+
+        if (googleUser != null) {
+          // Relacionar en Firestore
+          await FirebaseFirestore.instance
+              .collection('user_links')
+              .doc(email)
+              .set({
+            'bank_email': email,
+            'google_email': googleUser.email,
+            'fcmToken': await FirebaseMessaging.instance.getToken(),
+          });
+        }
+
+        Navigator.pushNamed(context, '/home'); // Redirigir al home
       } else {
         setState(() {
           _errorMessage = 'Email o contraseña incorrectos';
@@ -62,7 +80,8 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
-        backgroundColor: const Color.fromARGB(255, 0, 77, 21), // Color verde para la app bar
+        backgroundColor:
+            const Color.fromARGB(255, 0, 77, 21), // Color verde para la app bar
         foregroundColor: Colors.white,
       ),
       body: Padding(
@@ -75,7 +94,9 @@ class _LoginState extends State<Login> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Email',
-                labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 77, 21)), // Etiqueta verde
+                labelStyle: TextStyle(
+                    color:
+                        const Color.fromARGB(255, 0, 77, 21)), // Etiqueta verde
               ),
             ),
             SizedBox(height: 10),
@@ -85,7 +106,9 @@ class _LoginState extends State<Login> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Contraseña',
-                labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 77, 21)), // Etiqueta verde
+                labelStyle: TextStyle(
+                    color:
+                        const Color.fromARGB(255, 0, 77, 21)), // Etiqueta verde
               ),
             ),
             SizedBox(height: 10),
@@ -94,7 +117,8 @@ class _LoginState extends State<Login> {
               child: Text('Ingresar'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: const Color.fromARGB(255, 0, 77, 21), // Botón verde
+                backgroundColor:
+                    const Color.fromARGB(255, 0, 77, 21), // Botón verde
               ),
             ),
             if (_errorMessage.isNotEmpty)

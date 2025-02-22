@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:html' as html;
+//import 'dart:typed_data';
+//import 'dart:html' as html;
+
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -54,39 +57,66 @@ class _PagosServiciosVistaState extends State<PagosServiciosVista> {
     }
   }
 
+  // Future<void> _descargarHistorialPdf() async {
+  //   try {
+  //     // Realizamos la solicitud al backend para obtener el PDF
+  //     final response = await http
+  //         .get(Uri.parse('http://localhost:5000/api/transactions/pdf'));
+
+  //     if (response.statusCode == 200) {
+  //       // Obtenemos los bytes del archivo PDF
+  //       final bytes = response.bodyBytes;
+
+  //       // Creamos un objeto Blob a partir de los bytes del archivo
+  //       final blob = html.Blob([Uint8List.fromList(bytes)]);
+
+  //       // Generamos una URL para el Blob
+  //       final url = html.Url.createObjectUrlFromBlob(blob);
+
+  //       // Creamos un enlace de descarga
+  //       final anchor = html.AnchorElement(href: url)
+  //         ..target = 'blank'
+  //         ..download = 'transactions.pdf'
+  //         ..click();
+
+  //       // Limpiamos la URL después de la descarga
+  //       html.Url.revokeObjectUrl(url);
+  //     } else {
+  //       // Si la solicitud falla, mostramos un mensaje
+  //       _mostrarMensaje('Error al descargar el PDF');
+  //     }
+  //   } catch (e) {
+  //     // Capturamos errores en la solicitud HTTP
+  //     _mostrarMensaje('Error en la solicitud: $e');
+  //   }
+  // }
+
   Future<void> _descargarHistorialPdf() async {
-    try {
-      // Realizamos la solicitud al backend para obtener el PDF
-      final response = await http
-          .get(Uri.parse('http://localhost:5000/api/transactions/pdf'));
+  try {
+    final response = await http.get(Uri.parse('http://localhost:5000/api/transactions/pdf'));
 
-      if (response.statusCode == 200) {
-        // Obtenemos los bytes del archivo PDF
-        final bytes = response.bodyBytes;
+    if (response.statusCode == 200) {
+      final bytes = response.bodyBytes;
 
-        // Creamos un objeto Blob a partir de los bytes del archivo
-        final blob = html.Blob([Uint8List.fromList(bytes)]);
+      // Obtiene la ruta del directorio de almacenamiento
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/transactions.pdf';
 
-        // Generamos una URL para el Blob
-        final url = html.Url.createObjectUrlFromBlob(blob);
+      // Guarda el archivo en el almacenamiento
+      final file = File(filePath);
+      await file.writeAsBytes(bytes);
 
-        // Creamos un enlace de descarga
-        final anchor = html.AnchorElement(href: url)
-          ..target = 'blank'
-          ..download = 'transactions.pdf'
-          ..click();
-
-        // Limpiamos la URL después de la descarga
-        html.Url.revokeObjectUrl(url);
-      } else {
-        // Si la solicitud falla, mostramos un mensaje
-        _mostrarMensaje('Error al descargar el PDF');
-      }
-    } catch (e) {
-      // Capturamos errores en la solicitud HTTP
-      _mostrarMensaje('Error en la solicitud: $e');
+      // Abre el archivo PDF
+      await OpenFile.open(filePath);
+      
+      _mostrarMensaje('PDF descargado y abierto exitosamente');
+    } else {
+      _mostrarMensaje('Error al descargar el PDF');
     }
+  } catch (e) {
+    _mostrarMensaje('Error en la solicitud: $e');
   }
+}
 
   @override
   void initState() {

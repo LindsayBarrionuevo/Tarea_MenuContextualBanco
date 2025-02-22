@@ -1,0 +1,1 @@
+ D:\\LaptopSemesters\\6to\\AplicacionesMoviles\\FlutterProjects\\U3\\Tarea_MenuContextualBanco\\menulateralbanco\\.dart_tool\\flutter_build\\f057069555bc4d1e964cb4e4aa879e3b\\native_assets.yaml: 
