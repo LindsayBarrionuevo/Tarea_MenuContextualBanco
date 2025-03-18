@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "banco-bapiriya",
+  "private_key_id": "658ec39e16e2d649ed9adf28b14ffeed0ca7718a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCqsdkM21EamczG\nYOABlaRN1QzNfucZPS/cnm4upPWdvygewuYYP+nFqN4HEmDvBdQFeuGSnYrnjTsu\nQ18A/a3evR+u9avIMG7GqmRi988hci4stxyw0vfdtMd/J4QbcXVYxWYuananc0d7\n5h7l82CEaQY1Fr2W9ytWzZQCdBaAixnTe/XsjanZIHu93e2Rw9ZxSJx+AHqrps0J\n5Or2/x4UF6G6aU7nouPlCLD9XuqYozQvxFFrckChfCX8wy/h83KOBmwdPsfrwOBe\nlq2agsVB1z6aZw9syE+8UlGSNaZoV1bJLpyThY2gwyoF4SXomE4/WCE8frjouFvA\n+kWhp9KbAgMBAAECggEABZhYzGjjKrBATxkqOCl6JKotuXRGCcTArRM5+o6iFaHV\nCqHjpIdyMTsMzayJ8t79CStZYFK7rkVdDqVbF6kF3WQ6BdeI4ihiqS5sP4/VGuKN\n2VD5psfAVv5JZivOBikQHXD/0KVHiGU19aPtMic2uObJMxpKUqJKQ5XvgRKvEVcj\nTUUghoDmEdmtMRnbUqYy5bRA/60o53WbGMFZOyzzR6zJQgbMhwJP6/deC0rc2K05\n9PWvxHzMvtlsfxoZGyec6GpzUvrYeAthsU9w7OaExnnuIA2AI1uF0R/LIhojRQS6\nkWRA6F9NLcol0qWs0MZfsc6DRrhaMZcUxDXGS9XG+QKBgQDspbHkqmM9zwdODW/A\nNyY7ObmMfhSrZqDoakU8sGZq5gSuGYNDk511wGOKCEBM5DT4E8NbMKXciWtXbM2d\nw8gU9xftLg53FG+723D57r8kLTC1Idq10UidlAsTT656csPwoE8bEsac2NkFmKab\nea/feBePbeja1F/lTxz+PWEYBQKBgQC4p2kKRX/kw6bXmpGjoQfE17Rl4a5L8UgJ\nkhrCu/sOS0M/RpvnBzlA34o+Ebs8Ze/W76TH7GmejX+8gU1ThhIwhCfMuX6atyi0\nOETfUVte5P51yT8tSxNyA8N1bInqfiTuNo0Zp878kV4Xv2V1SV7tODNCppCcR+nI\nfnrCuyRiHwKBgQCYrQYqiytf8zO5Tb3teyc1SrbFR4q6Uoo5qGZnEz/gc+pNELS5\nYoFSOP9/THd/pDPwYX/GU4qO0DHqw42c3XU24XwUT4SRmyPDRX6MIVY8VtN36RGc\nABwjXiIPIXdmFKkJk8O1qdVt2BGcJLJI2Kd5O5ent7dlh2MfJH2GIb+EqQKBgQCS\nO9o+zS1swNlXc8yU1kktxVnTOXfsIofXNILG51H6TvZRnRyISLs5ug5j+2zZdy0K\nfbx0q7A1ZX/cjFXtqIatL2vJgLlX02eD2fAJHwgKTbWLGDZVK1iZ+YsIak2KjB25\nHTB/Odr9QC5RBj1WNiXcHZ7S0NBDQ9xL8IZNwyEcJwKBgB0FrhE36ReVBWxdO7Uv\n41ZLHzqRjlGA2P7lU5KKNXjGxVEHwlxyPs5LBhhQ1ra5uz8NzIlpbOQU6r7zSIK6\nX3iC8pyb1BzWhOY2UK7PZUU9hs/DjZDmzd8GId4JrUAc7q081KEIsoCPb/ixmDb8\nPEXE5a+Q1Hbwz3+JxrQ+ve1n\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@banco-bapiriya.iam.gserviceaccount.com",
+  "client_id": "108970812165906817759",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40banco-bapiriya.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "713659843769",
+    "project_id": "banco-bapiriya",
+    "storage_bucket": "banco-bapiriya.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713659843769:android:81a4882c2ee084411f8768",
+        "android_client_info": {
+          "package_name": "com.example.menulateral"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "713659843769-vs6l31eoi2lun2ngm15cap83ibc00cf8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.menulateral",
+            "certificate_hash": "baa7301c3818a48f5642af51cfe5e3f6e6d66a9d"
+          }
+        },
+        {
+          "client_id": "713659843769-2pjib9bc3mckj9bdbijhvud9o2abrfud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUVuZx6qdcT-V8z4_CSLfv9_OPJQkvjkc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "713659843769-2pjib9bc3mckj9bdbijhvud9o2abrfud.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "713659843769-josrjfmkrd6pvdf1eokha6skbgfdhsgj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.menulateral"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713659843769:android:918602b233e9756f1f8768",
+        "android_client_info": {
+          "package_name": "com.example.menulateralbanco_nuevo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "713659843769-2pjib9bc3mckj9bdbijhvud9o2abrfud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUVuZx6qdcT-V8z4_CSLfv9_OPJQkvjkc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "713659843769-2pjib9bc3mckj9bdbijhvud9o2abrfud.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "713659843769-josrjfmkrd6pvdf1eokha6skbgfdhsgj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.menulateral"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
